@@ -3,7 +3,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 from fish_ui import Ui_MainWindow
 #import FiSH
-
+from progress import Ui_
 import progress
 reload(progress)
 
@@ -14,20 +14,31 @@ class MyForm(QtGui.QMainWindow):
     
     self.ui.setupUi(self)
     self.ui.listWidget_users.currentItemChanged.connect(self.populateTable)
-    self.ui.tableWidget_filelist.itemDoubleClicked.connect(self.beginDownload)
     self.ui.tableWidget_filelist.cellClicked.connect(self.selectRow)
-    #self.ui.tableWidget_filelist.setContextMenuPolicy(QtGui.QTreeWidget.CustomContextMenu)
-    #self.ui.tableWidget_filelist.customContextMenuRequested.connect(self.popup)
+    self.ui.tableWidget_filelist.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    self.ui.tableWidget_filelist.customContextMenuRequested.connect(self.popupMenu)
+    
+    
     checklist = ["0", "1", "2"]
+    self.timer = QtCore.QBasicTimer()
+    self.step = 0
+    
     for elem in checklist:
     	self.ui.listWidget_users.addItem(elem)
-  def popup(self, pos):
-    
-    menu = QMenu()
+
+  
+
+
+  def cancelDown(self):
+    print "hello"
+  def popupMenu(self, pos):
+    self.selectRow()
+    menu = QtGui.QMenu()
     downAction = menu.addAction("Download")
-    action = menu.exec_(self.mapToGlobal(pos))
+    action = menu.exec_(QtGui.QCursor.pos())
     if action == downAction:
-    	self.progress(self.ui.tableWidget_filelist.item(activeRow, 0).text())  
+    	self.progress(self.ui.tableWidget_filelist.item(self.ui.tableWidget_filelist.currentItem().row(), 0).text())  
+
   def beginDownload(self):
     self.progress(self.ui.tableWidget_filelist.item(self.ui.tableWidget_filelist.currentItem().row(), 0).text())  
   
@@ -68,7 +79,7 @@ class MyForm(QtGui.QMainWindow):
 	  item.setSizeHint(item_widget.sizeHint())
 	  self.ui.listWidget.addItem(item)
 	  self.ui.listWidget.setItemWidget(item,item_widget)
-
+	  
 
 if __name__ == "__main__":
   app = QtGui.QApplication(sys.argv)
