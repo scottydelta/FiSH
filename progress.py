@@ -29,14 +29,27 @@ class Ui_(QtGui.QWidget):
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.progressBar = QtGui.QProgressBar(self.layoutWidget)
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.gridLayout.addWidget(self.progressBar, 0, 1, 1, 1)
+	self.timer = QtCore.QBasicTimer()
+        self.step = 0
+        self.timer.start(100,self)
+	print "after timer call"
+   
+    	
 
-        
         QtCore.QMetaObject.connectSlotsByName(self)
 
         
         self.label.setText(_translate("", name, None))
+	
 	self.setLayout(self.gridLayout)
-
+    def timerEvent(self, e):
+	print "inside timerEvent"
+    	
+  	if self.step>= 100:
+	  self.timer.stop()
+	  return
+	self.step = self.step + 1
+	self.progressBar.setValue(self.step)
